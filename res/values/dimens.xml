@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!-- slider -->
+  <dimen name="slider_margin">10dp</dimen>
+  <integer name="slider_max">100</integer>
+  <integer name="slider_weight">1</integer>
+
+</resources>

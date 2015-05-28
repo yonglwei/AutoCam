@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.tomasdavid.videocamera.app.VideoPlayer" >
+
+  <VideoView
+      android:id="@+id/videoView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentLeft="true"
+      android:layout_above="@+id/linearLayout" />
+
+  <LinearLayout
+      android:id="@+id/linearLayout"
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" >
+
+    <SeekBar
+        android:id="@+id/slider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="@integer/slider_weight"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/slider_margin"
+        android:layout_marginRight="@dimen/slider_margin"
+        android:max="@integer/slider_max" />
+
+    <ImageButton
+        android:id="@+id/playPauseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_media_play"
+        android:onClick="onClickPlayStop" />
+
+  </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.tomasdavid.videocamera.app.MainActivity" >
+
+  <FrameLayout
+      android:id="@+id/camera_preview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@+id/linearLayout"/>
+
+  <LinearLayout
+      android:id="@+id/linearLayout"
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true" >
+
+      <SeekBar
+          android:id="@+id/zoomSlider"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_marginLeft="@dimen/slider_margin"
+          android:layout_marginRight="@dimen/slider_margin"
+          android:layout_weight="1"/>
+
+      <ImageButton
+          android:id="@+id/button_info"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@android:drawable/ic_menu_info_details"
+          android:onClick="onInfoClick" />
+
+      <ImageButton
+          android:id="@+id/button_settings"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@android:drawable/ic_menu_preferences"
+          android:onClick="onSettingsClick" />
+
+      <ImageButton
+          android:id="@+id/button_gallery"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:onClick="onClickEdit"
+          android:src="@android:drawable/ic_menu_gallery" />
+
+      <ImageButton
+          android:id="@+id/button_capture"
+          android:onClick="onClick"
+          android:src="@android:drawable/ic_menu_camera"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+  </LinearLayout>
+
+</RelativeLayout>

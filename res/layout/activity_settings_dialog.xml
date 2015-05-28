@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.tomasdavid.videocamera.app.SettingsDialog">
+
+    <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+        <TableRow android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:gravity="center">
+            <TextView
+                    android:id="@+id/setting_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="SETTINGS" />
+        </TableRow>
+
+        <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp">
+            <TextView
+                    android:id="@+id/efect_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Effect" />
+
+            <Spinner
+                    android:id="@+id/effect_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+        </TableRow>
+
+        <TableRow android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:gravity="center"
+                  android:layout_margin="10dp">
+            <TextView
+                    android:id="@+id/resolution_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Resolution" />
+
+            <Spinner
+                    android:id="@+id/resolution_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
