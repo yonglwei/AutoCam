@@ -30,10 +30,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     public void surfaceCreated(SurfaceHolder holder) {
 	    try {
-//	    	Camera.Parameters parameters = camera.getParameters();
-//	        parameters.set("orientation", "portrait");
 	        camera.setDisplayOrientation(90);
-//	        parameters.setRotation(90);
             camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (IOException e) {
@@ -56,13 +53,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      * @param holder Holder
      */
     public void surfaceDestroyed(SurfaceHolder holder) {
-    	Log.d("CameraPreview", "surfaceDestroyed");
-    	if(camera != null) {
-    		getHolder().removeCallback(this);
-//    		camera.stopPreview();
-    		camera.setPreviewCallback(null);
-    		camera.release();
-    		camera = null;
-    	}
+    	getHolder().removeCallback(this);
     }
 }

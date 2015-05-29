@@ -37,67 +37,22 @@ import com.hunter.camservice.connectivity.ConnectivityService;
 import com.hunter.camservice.video.VideoListActivity;
 
 public class MainActivity extends Activity {
-	
-	/**
-    * Tag of class.
-    */
    private static final String TAG = "MainActivity";
-
-   /**
-    * Is recording parameter.
-    */
    public boolean isRecording = false;
-
-   /**
-    * Actually selected resolution.
-    */
    private Integer resolutionValue;
-
-   /**
-    * Actually selected effect.
-    */
    private Integer selectedEffect;
-
-   /**
-    * Recording camera.
-    */
    private Camera camera;
-
-   /**
-    * Preview of camera.
-    */
    private SurfaceView mPreview;
-
-   /**
-    * Media recorder.
-    */
    private MediaRecorder mMediaRecorder;
-
-   /**
-    * Button for capturing video.
-    */
    private ImageButton captureButton;
-
-   /**
-    * Preview layout.
-    */
    private FrameLayout preview;
-
-   /**
-    * Slider for zooming video.
-    */
    private SeekBar zoomSlider;
-
-   /**
-    * Scale detector.
-    */
    private ScaleGestureDetector mScaleDetector;
 
    /**
     * Initialization method.
     * @param savedInstanceState
     */
-   
    protected void onCreate(Bundle savedInstanceState) {
 	   Log.d(TAG, "MainActivity onCreate");
 	   super.onCreate(savedInstanceState);
@@ -148,8 +103,8 @@ public class MainActivity extends Activity {
     * When application is paused method.
     */
    protected void onPause() {
-	   Log.d(TAG, "MainActivity onPause");
        super.onPause();
+       Log.d(TAG, "MainActivity onPause");
        if (isRecording) {
            mMediaRecorder.stop();
            isRecording = false;
@@ -164,25 +119,9 @@ public class MainActivity extends Activity {
 
    @Override
    protected void onStop() {
-	   Log.d(TAG, "MainActivity onStop");
 	   super.onStop();
+	   Log.d(TAG, "MainActivity onStop");
    }
-
-@Override
-	protected void onDestroy() {
-	   Log.d(TAG, "MainActivity onDestroy");
-		super.onDestroy();
-		if (isRecording) {
-	        mMediaRecorder.stop();
-	    }
-	
-	    releaseMediaRecorder();
-	    releaseCamera();
-	    
-	    
-	    stopConnectivityService();
-		
-	}
 
 /**
     * Listener for change of zoom slider.
@@ -319,7 +258,6 @@ public class MainActivity extends Activity {
     */
    private void releaseCamera() {
        if (camera != null) {
-    	   camera.setPreviewCallback(null);
            camera.release();
            camera = null;
        }
