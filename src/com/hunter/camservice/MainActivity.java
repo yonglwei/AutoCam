@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -34,9 +33,11 @@ import android.widget.Toast;
 
 import com.hunter.camservice.camera.CameraPreview;
 import com.hunter.camservice.common.Utilities;
+import com.hunter.camservice.connectivity.ConnectivityService;
 import com.hunter.camservice.video.VideoListActivity;
 
 public class MainActivity extends Activity {
+	
 	/**
     * Tag of class.
     */
@@ -60,7 +61,7 @@ public class MainActivity extends Activity {
    /**
     * Recording camera.
     */
-   private Camera mCamera;
+   private Camera camera;
 
    /**
     * Preview of camera.
@@ -98,7 +99,8 @@ public class MainActivity extends Activity {
     */
    
    protected void onCreate(Bundle savedInstanceState) {
-       super.onCreate(savedInstanceState);
+	   Log.d(TAG, "MainActivity onCreate");
+	   super.onCreate(savedInstanceState);
        setContentView(R.layout.activity_main);
 
        captureButton = (ImageButton) findViewById(R.id.button_capture);
@@ -108,31 +110,45 @@ public class MainActivity extends Activity {
        zoomSlider.setOnSeekBarChangeListener(onZoomSliderChange);
 
        resolutionValue = Utilities.getSupportedProfiles(Camera.CameraInfo.CAMERA_FACING_BACK).get(0);
+       
+       startConnectivityService();
+   }
+   
+   private void startConnectivityService() {
+	   Intent intent = new Intent(this, ConnectivityService.class);
+	   startService(intent);
+   }
+   
+   private void stopConnectivityService() {
+	   Intent intent = new Intent(this, ConnectivityService.class);
+	   stopService(intent);
    }
 
    /**
     * When application is resume method.
     */
-   
    protected void onResume() {
+	   Log.d(TAG, "MainActivity onResume");
        super.onResume();
 
        mScaleDetector  = new ScaleGestureDetector(this, scaleListener);
-       mCamera = getCameraInstance();
-       mPreview = new CameraPreview(this, mCamera);
+       camera = getCameraInstance();
+       mPreview = new CameraPreview(this, camera);
        preview.addView(mPreview);
 
-       if (mCamera.getParameters().isZoomSupported()) {
-           zoomSlider.setMax(mCamera.getParameters().getMaxZoom());
-           zoomSlider.setProgress(mCamera.getParameters().getZoom());
+       if (camera.getParameters().isZoomSupported()) {
+           zoomSlider.setMax(camera.getParameters().getMaxZoom());
+           zoomSlider.setProgress(camera.getParameters().getZoom());
        }
+       
+       startConnectivityService();
    }
 
    /**
     * When application is paused method.
     */
-   
    protected void onPause() {
+	   Log.d(TAG, "MainActivity onPause");
        super.onPause();
        if (isRecording) {
            mMediaRecorder.stop();
@@ -142,21 +158,45 @@ public class MainActivity extends Activity {
        captureButton.setImageResource(android.R.drawable.ic_menu_camera);
        releaseMediaRecorder();
        releaseCamera();
+       
+       stopConnectivityService();
    }
 
-   /**
+   @Override
+   protected void onStop() {
+	   Log.d(TAG, "MainActivity onStop");
+	   super.onStop();
+   }
+
+@Override
+	protected void onDestroy() {
+	   Log.d(TAG, "MainActivity onDestroy");
+		super.onDestroy();
+		if (isRecording) {
+	        mMediaRecorder.stop();
+	    }
+	
+	    releaseMediaRecorder();
+	    releaseCamera();
+	    
+	    
+	    stopConnectivityService();
+		
+	}
+
+/**
     * Listener for change of zoom slider.
     */
    private SeekBar.OnSeekBarChangeListener onZoomSliderChange = new SeekBar.OnSeekBarChangeListener() {
 
        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-           Camera.Parameters p = mCamera.getParameters();
+           Camera.Parameters p = camera.getParameters();
 
            if (p.isZoomSupported()) {
 
                p.setZoom(progress);
-               p.setFocusMode(p.FOCUS_MODE_CONTINUOUS_VIDEO);
-               mCamera.setParameters(p);
+               p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+               camera.setParameters(p);
            }
        }
 
@@ -193,14 +233,14 @@ public class MainActivity extends Activity {
     * @return True if everything is prepared.
     */
    private boolean prepareVideoRecorder() {
-       mCamera.stopPreview();
+       camera.stopPreview();
 
-       //mCamera = getCameraInstance();
+       //camera = getCameraInstance();
        mMediaRecorder = new MediaRecorder();
 
        // Step 1: Unlock and set camera to MediaRecorder
-       mCamera.unlock();
-       mMediaRecorder.setCamera(mCamera);
+       camera.unlock();
+       mMediaRecorder.setCamera(camera);
 
        // Step 2: Set sources
        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -241,7 +281,7 @@ public class MainActivity extends Activity {
        if (isRecording) {
            mMediaRecorder.stop();
            releaseMediaRecorder();
-           mCamera.lock();
+           camera.lock();
            captureButton.setImageResource(android.R.drawable.ic_menu_camera);
            isRecording = false;
        } else {
@@ -270,7 +310,7 @@ public class MainActivity extends Activity {
            mMediaRecorder.reset();
            mMediaRecorder.release();
            mMediaRecorder = null;
-           mCamera.lock();
+           camera.lock();
        }
    }
 
@@ -278,9 +318,10 @@ public class MainActivity extends Activity {
     * Method for release camera.
     */
    private void releaseCamera() {
-       if (mCamera != null) {
-           mCamera.release();
-           mCamera = null;
+       if (camera != null) {
+    	   camera.setPreviewCallback(null);
+           camera.release();
+           camera = null;
        }
    }
 
@@ -378,7 +419,7 @@ public class MainActivity extends Activity {
            resolutionSpinner = (Spinner) findViewById(R.id.resolution_spinner);
            effectSpinner = (Spinner) findViewById(R.id.effect_spinner);
 
-           ArrayAdapter<String> effectAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, mCamera.getParameters().getSupportedColorEffects());
+           ArrayAdapter<String> effectAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, camera.getParameters().getSupportedColorEffects());
            effectSpinner.setAdapter(effectAdapter);
 
            ArrayAdapter<String> resolutionAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Utilities.getSupportedResolutions(Camera.CameraInfo.CAMERA_FACING_BACK));
@@ -406,9 +447,9 @@ public class MainActivity extends Activity {
            
            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                   Camera.Parameters p = mCamera.getParameters();
+                   Camera.Parameters p = camera.getParameters();
                    p.setColorEffect(p.getSupportedColorEffects().get(position));
-                   mCamera.setParameters(p);
+                   camera.setParameters(p);
                    selectedEffect = position;
            }
 
@@ -441,19 +482,19 @@ public class MainActivity extends Activity {
     */
    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-       Camera.Parameters p = mCamera.getParameters();
+       Camera.Parameters p = camera.getParameters();
 
        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
            if (p.isZoomSupported()) {
                int change = p.getZoom() - p.getMaxZoom() / 10;
                p.setZoom(change  < 0 ? 0 : change);
-               mCamera.setParameters(p);
+               camera.setParameters(p);
            }
        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
            if (p.isZoomSupported()) {
                int change = p.getZoom()  + p.getMaxZoom() / 10;
                p.setZoom(change  > p.getMaxZoom() ? p.getMaxZoom() : change);
-               mCamera.setParameters(p);
+               camera.setParameters(p);
            }
        } else {
            super.onKeyDown(keyCode, event);
@@ -490,7 +531,7 @@ public class MainActivity extends Activity {
 
        
        public boolean onScaleBegin(ScaleGestureDetector detector) {
-           p = mCamera.getParameters();
+           p = camera.getParameters();
            zoom = p.getZoom();
            step = p.getMaxZoom() / 10;
            return true;
@@ -507,12 +548,12 @@ public class MainActivity extends Activity {
 
                int change = (int)(zoom - p.getMaxZoom() * (1 - scale));
                p.setZoom(change < 0 ? 0 : change);
-               mCamera.setParameters(p);
+               camera.setParameters(p);
 
            } else {
                int change = (int)(zoom + step * scale);
                p.setZoom(change > p.getMaxZoom() ? p.getMaxZoom() : change);
-               mCamera.setParameters(p);
+               camera.setParameters(p);
            }
 
            return false;

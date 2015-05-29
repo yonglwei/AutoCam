@@ -16,15 +16,15 @@ import android.util.Log;
 
 import com.hunter.camservice.common.TipsToast;
 
-public class NetworkMgrService extends Service {
-	private static final String tag = NetworkMgrService.class.getSimpleName();
+public class ConnectivityService extends Service {
+	private static final String tag = ConnectivityService.class.getSimpleName();
 	
 	private final Handler networkHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 			case 1:
 				Log.d(tag, msg.obj.toString());
-				TipsToast.show(NetworkMgrService.this, checkStatus().toString());
+				TipsToast.show(ConnectivityService.this, checkStatus().toString());
 				break;
 			}
 		}
